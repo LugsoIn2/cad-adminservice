@@ -10,19 +10,17 @@ RUN pip install gunicorn
 RUN apt-get update
 RUN apt-get install -y nginx
 COPY ./nginx/proxy-adminservice.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/proxy-adminservice.conf \
-/etc/nginx/sites-enabled/proxy-adminservice.conf & \
-rm /etc/nginx/sites-enabled/default
+RUN ln -s /etc/nginx/sites-available/proxy-adminservice.conf /etc/nginx/sites-enabled/proxy-adminservice.conf
+RUN rm /etc/nginx/sites-enabled/default
 
 # copy service source
 RUN mkdir /adminservice
 WORKDIR /adminservice
 COPY ./adminservice .
-COPY ./requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
+COPY ./requirements.txt /adminservice/requirements.txt
+RUN pip install -r /adminservice/requirements.txt
 
 # collect all static files
-WORKDIR /adminservice/adminservice
 RUN python /adminservice/manage.py migrate
 RUN python /adminservice/manage.py collectstatic --noinput
 
