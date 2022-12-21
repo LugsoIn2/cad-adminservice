@@ -149,5 +149,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 env = environ.Env()
 environ.Env.read_env()
-AWS_ACCESS_KEY=env('AWS_ACCESS_KEY')
-AWS_SECRET=env('AWS_SECRET')
+#AWS_ACCESS_KEY=env('AWS_ACCESS_KEY')
+#AWS_SECRET=env('AWS_SECRET')
+AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY')
+AWS_SECRET=os.environ.get('AWS_SECRET')

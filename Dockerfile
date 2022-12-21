@@ -23,7 +23,11 @@ RUN pip install -r /requirements.txt
 
 # collect all static files
 WORKDIR /adminservice/adminservice
+RUN python /adminservice/manage.py migrate
 RUN python /adminservice/manage.py collectstatic --noinput
+
+WORKDIR /adminservice
+EXPOSE 80
 
 # run nginx + gunicorn
 CMD (gunicorn --bind 127.0.0.1:8000 --user www-data --workers=2 adminservice.wsgi) & \
