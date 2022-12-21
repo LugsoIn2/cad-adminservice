@@ -1,5 +1,4 @@
 # cad-adminservice
-
 ## After cloning:
 ### cd into cloned folder
 ### python3 -m venv venv
@@ -11,3 +10,5 @@
 
 ## New python dependencies:
 ### python -m pip freeze > requirements.txt
+
+## For Terraform create in terraform directory secrets.tfvars!
