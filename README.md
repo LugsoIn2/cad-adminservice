@@ -11,4 +11,8 @@
 ## New python dependencies:
 ### python -m pip freeze > requirements.txt
 
-## For Terraform create in terraform directory secrets.tfvars!
+## Django env for local
+### put the .env Variable in root directory of the repo 
+
+## Terraform
+### For Terraform create in terraform/prod directory secrets.tfvars!
