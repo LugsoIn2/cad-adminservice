@@ -1,5 +1,5 @@
-resource "aws_dynamodb_table" "event_table" {
-  name               = "event_table"
+resource "aws_dynamodb_table" "event_tableblatest" {
+  name               = "event_tableblatest"
   billing_mode       = "PROVISIONED"
   read_capacity      = "30"
   write_capacity     = "30"
