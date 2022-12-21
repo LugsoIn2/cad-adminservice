@@ -8,6 +8,9 @@ on:
 env:
   AWS_REGION: eu-central-1                   
   ECR_REPOSITORY: cad-adminservice
+  # Keys for django env
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET: ${{ secrets.AWS_SECRET }}
 
 jobs:
   build:
