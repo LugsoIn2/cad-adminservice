@@ -6,6 +6,7 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 def get_csrf(request):
@@ -37,6 +38,28 @@ def login_view(request):
 
     login(request, user)
     return JsonResponse({'detail': 'Successfully logged in.'})
+
+@require_POST
+def register_view(request):
+    data = json.loads(request.body)
+    email = data.get('username')
+    password = data.get('password1')
+    password = data.get('password2')
+
+    if email is None or password is None:
+        return JsonResponse({'detail': 'Please provide email and password.'}, status=400)
+
+    print(json.loads(request.body))
+    form = UserCreationForm(json.loads(request.body))
+    if form.is_valid():
+        form.save()
+        username = form.cleaned_data.get('username')
+        raw_password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=raw_password)
+        login(request, user)
+        return JsonResponse({'detail': 'Successfully registered.'})
+    else:
+        return JsonResponse({'error': form.errors})
 
 
 def logout_view(request):
