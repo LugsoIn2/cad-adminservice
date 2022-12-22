@@ -41,15 +41,6 @@ def login_view(request):
 
 @require_POST
 def register_view(request):
-    data = json.loads(request.body)
-    email = data.get('username')
-    password = data.get('password1')
-    password = data.get('password2')
-
-    if email is None or password is None:
-        return JsonResponse({'detail': 'Please provide email and password.'}, status=400)
-
-    print(json.loads(request.body))
     form = UserCreationForm(json.loads(request.body))
     if form.is_valid():
         form.save()
@@ -81,5 +72,5 @@ def session_view(request):
 def whoami_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({'isAuthenticated': False})
-
+    
     return JsonResponse({'username': request.user.username})
