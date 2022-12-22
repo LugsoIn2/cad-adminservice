@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User
 
 
 def get_csrf(request):
@@ -12,15 +13,22 @@ def get_csrf(request):
     response['X-CSRFToken'] = get_token(request)
     return response
 
+# create a function to resolve email to username
+def get_user(email):
+    try:
+        return User.objects.get(email=email.lower())
+    except User.DoesNotExist:
+        return None
 
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
 
-    if username is None or password is None:
-        return JsonResponse({'detail': 'Please provide username and password.'}, status=400)
+    if email is None or password is None:
+        return JsonResponse({'detail': 'Please provide email and password.'}, status=400)
+    username = get_user(email)
 
     user = authenticate(username=username, password=password)
 
