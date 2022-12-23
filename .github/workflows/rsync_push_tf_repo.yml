@@ -1,0 +1,38 @@
+name: rsync and push terraform directory to tf_all repo 
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    replicate-file:
+        runs-on: ubuntu-latest
+        name: Push TF to Repo all
+
+        steps:
+        - name: Checkout local repo
+          uses: actions/checkout@v2
+          with:
+            path: ./localrepo
+
+        - name: Checkout cad-terraform-all
+          uses: actions/checkout@master
+          with: 
+            repository: LugsoIn2/cad-terraform-all
+            token: ${{ secrets.REPO_TOKEN }}
+            path: ./tf_adminservice
+
+        - name: rsync files
+          run: |
+            mkdir -p ./tf_adminservice/tf_adminservice
+            rsync -av ./localrepo/terraform/ ./tf_adminservice/tf_adminservice --delete
+
+        - name: push cad-terraform-all repo
+          run: |
+            cd ./tf_adminservice/tf_adminservice
+            git add .
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git commit -am "File Replicated from tf-general"
+            git push
