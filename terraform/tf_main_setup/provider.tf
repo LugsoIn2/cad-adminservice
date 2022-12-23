@@ -5,6 +5,12 @@ terraform {
       version = "4.38.0"
     }
   }
+  backend "s3" {
+     bucket         = "cad-terraform-state-service"
+     key            = "terraform.tfstate"
+     region         = "eu-central-1"
+     dynamodb_table = "terraform_state"
+   }
 }
 
 provider "aws" {
