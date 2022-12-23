@@ -23,4 +23,5 @@ add a file with the following content and name "secrets.auto.tfvars" in the dire
 access_key = "id"
 secret_key = "secret_key"
 ```
-
+### tf_main_setup 
+ATTENTION: tf_main_setup = default workspace
