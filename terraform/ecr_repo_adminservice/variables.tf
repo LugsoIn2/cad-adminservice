@@ -1,10 +1,3 @@
-variable "access_key" {
-
-}
-
-variable "secret_key" {
-  
-}
 variable "ecr_name" {
   description = "ECR Repo name"
   type = string
