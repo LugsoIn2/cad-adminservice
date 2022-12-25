@@ -1,4 +1,10 @@
 terraform {
+    backend "s3" {
+     bucket         = "cad-terraform-state-service"
+     key            = "terraform.tfstate"
+     region         = "eu-central-1"
+     dynamodb_table = "terraform_state"
+   }
   required_providers {
     aws = {
       source = "hashicorp/aws"

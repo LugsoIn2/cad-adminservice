@@ -34,5 +34,5 @@ jobs:
             git add .
             git config user.name github-actions
             git config user.email github-actions@github.com
-            git commit -am "File Replicated from tf-general"
+            git commit -am "File Replicated from adminservice"
             git push
