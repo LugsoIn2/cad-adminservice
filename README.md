@@ -14,18 +14,10 @@
 ## Django env for local
 ### put the .env Variable in root directory of the repo 
 
-## Terraform
-We use a terraform setup with global state management over AWS S3 Backend.
-The TF workspace for this service: prod-adminservice
-### Terraform AWS secrets for local testing
-add a file with the following content and name "secrets.auto.tfvars" in the directory ./terraform/prod/
-```sh
-access_key = "id"
-secret_key = "secret_key"
-```
-### Terraform Workspaces
-ATTENTION: tf_main_setup = "default" workspace
+## Terraform using
+One for all after refactor:
 
-ecr_repo_adminservice = "ecr_repo_adminservice" workspace
-adminservice = "prod-adminservice" workspace
+[Terraform Repo](https://github.com/LugsoIn2/cad-terraform-all.git)
+
+ 
 
