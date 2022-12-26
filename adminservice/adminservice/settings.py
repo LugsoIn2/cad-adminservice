@@ -27,8 +27,6 @@ SECRET_KEY = 'django-insecure-hctjd!d#4_k!-ev_xokc6qj8ghf9cu89#k+66r)xp#o#te2$p*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
-
 
 # Application definition
 
@@ -157,6 +155,10 @@ env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET=os.environ.get('AWS_SECRET')
 
+#ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
+
 
 ###                 ###
 #       CORS ON       #
@@ -171,6 +173,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.netpy\.de$",
+    r"^http://\w+\.netpy\.de$",
+]
 
 # PROD ONLY
 # CSRF_COOKIE_SECURE = True
