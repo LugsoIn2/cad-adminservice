@@ -28,6 +28,12 @@ RUN python /adminservice/manage.py collectstatic --noinput
 WORKDIR /adminservice
 EXPOSE 80
 
+# Install Terraform
+RUN wget https://releases.hashicorp.com/terraform/1.3.6/terraform_1.3.6_linux_amd64.zip
+RUN unzip terraform_1.3.6_linux_amd64.zip
+RUN mv terraform /usr/local/bin/
+RUN terraform --version 
+
 # run nginx + gunicorn
 CMD (gunicorn --bind 127.0.0.1:8000 --user www-data --workers=2 adminservice.wsgi) & \
 nginx -g "daemon off;"

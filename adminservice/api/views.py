@@ -80,7 +80,7 @@ dynamodb = boto3.resource(
     region_name='eu-central-1')
 
 # Get Information about my tenant
-def get_my_tenant(request):
+def mytenant_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({})
     table = dynamodb.Table('tenants')
@@ -91,3 +91,29 @@ def get_my_tenant(request):
     if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
         return HttpResponse('')
     return JsonResponse(response['Items'][0], safe=False)
+
+# Set my subscription type
+@require_POST
+def subscription_view(request):
+    data = json.loads(request.body)
+    subscription = data.get('subscription')
+    city = data.get('city')
+    table = dynamodb.Table('tenants')
+    subscription_type = ''
+    if (subscription == 'Free'):
+        subscription_type = 0
+    elif (subscription == 'Standard'):
+        subscription_type = 1
+    elif (subscription == 'Enterprise'):
+        subscription_type = 2
+    
+    if subscription_type == '':
+        return JsonResponse({})
+
+    response = table.update_item(
+        Key={'city': city},
+        UpdateExpression="set subscription_type = :s",
+        ExpressionAttributeValues={
+            ':s': subscription,
+        },
+        ReturnValues="UPDATED_NEW")
