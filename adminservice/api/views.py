@@ -1,5 +1,4 @@
 import json
-
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
@@ -7,20 +6,19 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponse
+from django.http import JsonResponse
+import boto3
+from django.conf import settings
+from boto3.dynamodb.conditions import Key
 
-
+# Get CSRF Token
 def get_csrf(request):
     response = JsonResponse({'detail': 'CSRF cookie set'})
     response['X-CSRFToken'] = get_token(request)
     return response
 
-# create a function to resolve email to username
-def get_user(email):
-    try:
-        return User.objects.get(email=email.lower())
-    except User.DoesNotExist:
-        return None
-
+# Login
 @require_POST
 def login_view(request):
     data = json.loads(request.body)
@@ -29,16 +27,14 @@ def login_view(request):
 
     if email is None or password is None:
         return JsonResponse({'detail': 'Please provide email and password.'}, status=400)
-    username = get_user(email)
-
-    user = authenticate(username=username, password=password)
-
+    user = authenticate(username=email, password=password)
     if user is None:
         return JsonResponse({'detail': 'Invalid credentials.'}, status=400)
 
     login(request, user)
     return JsonResponse({'detail': 'Successfully logged in.'})
 
+# Register
 @require_POST
 def register_view(request):
     form = UserCreationForm(json.loads(request.body))
@@ -53,6 +49,7 @@ def register_view(request):
         return JsonResponse({'error': form.errors})
 
 
+# Logout
 def logout_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({'detail': 'You\'re not logged in.'}, status=400)
@@ -68,9 +65,29 @@ def session_view(request):
 
     return JsonResponse({'isAuthenticated': True})
 
-
+# Who am I
 def whoami_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({'isAuthenticated': False})
     
     return JsonResponse({'username': request.user.username})
+
+# Dynamodb configuration
+dynamodb = boto3.resource(
+    'dynamodb',
+    aws_access_key_id=settings.AWS_ACCESS_KEY,
+    aws_secret_access_key=settings.AWS_SECRET,
+    region_name='eu-central-1')
+
+# Get Information about my tenant
+def get_my_tenant(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({})
+    table = dynamodb.Table('tenants')
+    response = table.query(
+        IndexName='user_id-index',
+        KeyConditionExpression=Key('user_id').eq(str(request.user))
+    )
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
+        return HttpResponse('')
+    return JsonResponse(response['Items'][0], safe=False)
