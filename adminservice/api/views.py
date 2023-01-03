@@ -115,7 +115,8 @@ def subscription_view(request):
     terraform_dir = os.path.join(os.path.dirname(__file__), '../terraform-commands/')
     if (subscription == 'Free'):
         subscription_type = 0
-        subprocess.Popen([terraform_dir + 'prod.sh'], shell=True)
+        # TODO:
+        # destroy terraform workspace, if user had subscription before
     elif (subscription == 'Standard'):
         subscription_type = 1
         subprocess.Popen([terraform_dir + 'standard.sh'], shell=True)
