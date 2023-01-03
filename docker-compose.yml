@@ -1,16 +1,18 @@
 version: "3"
 services:
   eventservice:
-    #environment:
-    #  - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-    #  - AWS_SECRET=${AWS_SECRET}
+    environment:
+      - TF_VAR_access_key=${TF_VAR_access_key}
+      - TF_VAR_secret_key=${TF_VAR_secret_key}
+      - TF_VAR_gh_token=${TF_VAR_gh_token}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     build:
       context: . #Dir for Compose to build
     env_file:
       - ./.env
     # Portmapping
     ports:
-      - "80:80"
+      - "8000:80"
     volumes: 
     # Copy changes to the image in real-time.
       - ./adminservice:/adminservice

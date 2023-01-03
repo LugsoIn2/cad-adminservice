@@ -9,8 +9,17 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.http import JsonResponse
 import boto3
+import os
 from django.conf import settings
 from boto3.dynamodb.conditions import Key
+import subprocess
+
+# Dynamodb configuration
+dynamodb = boto3.resource(
+    'dynamodb',
+    aws_access_key_id=settings.AWS_ACCESS_KEY,
+    aws_secret_access_key=settings.AWS_SECRET,
+    region_name='eu-central-1')
 
 # Get CSRF Token
 def get_csrf(request):
@@ -72,13 +81,6 @@ def whoami_view(request):
     
     return JsonResponse({'username': request.user.username})
 
-# Dynamodb configuration
-dynamodb = boto3.resource(
-    'dynamodb',
-    aws_access_key_id=settings.AWS_ACCESS_KEY,
-    aws_secret_access_key=settings.AWS_SECRET,
-    region_name='eu-central-1')
-
 # Get Information about my tenant
 def mytenant_view(request):
     if not request.user.is_authenticated:
@@ -100,13 +102,18 @@ def subscription_view(request):
     city = data.get('city')
     table = dynamodb.Table('tenants')
     subscription_type = ''
+    
+    terraform_dir = os.path.join(os.path.dirname(__file__), '../terraform-commands/')
     if (subscription == 'Free'):
         subscription_type = 0
+        process = subprocess.Popen([terraform_dir + 'prod.sh'], shell=True)
     elif (subscription == 'Standard'):
         subscription_type = 1
+        process = subprocess.Popen([terraform_dir + 'standard.sh'], shell=True)
     elif (subscription == 'Enterprise'):
-        subscription_type = 2
-    
+        subscription_type = 2        
+        process = subprocess.Popen([terraform_dir + 'enterprise.sh'], shell=True)
+
     if subscription_type == '':
         return JsonResponse({})
 
@@ -114,6 +121,9 @@ def subscription_view(request):
         Key={'city': city},
         UpdateExpression="set subscription_type = :s",
         ExpressionAttributeValues={
-            ':s': subscription,
+            ':s': subscription_type,
         },
         ReturnValues="UPDATED_NEW")
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+        return HttpResponse('')
+    return JsonResponse(data)
