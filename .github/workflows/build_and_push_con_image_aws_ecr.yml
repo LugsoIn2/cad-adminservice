@@ -27,7 +27,6 @@ jobs:
           repository: LugsoIn2/cad-terraform-all
           ref: master
           token: ${{ secrets.REPO_TOKEN }}
-          path: ./bar
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
