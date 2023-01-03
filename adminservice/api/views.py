@@ -47,12 +47,21 @@ def login_view(request):
 @require_POST
 def register_view(request):
     form = UserCreationForm(json.loads(request.body))
+    data = json.loads(request.body)
+    city = data.get('city')
     if form.is_valid():
         form.save()
+        # Register User
         username = form.cleaned_data.get('username')
         raw_password = form.cleaned_data.get('password1')
         user = authenticate(username=username, password=raw_password)
+        # Login User
         login(request, user)
+        # Create entry for tenant table
+        print(city)
+        table = dynamodb.Table('tenants')
+        item = table.put_item(Item={"city": city, "subscription_type": 0, "user_id": username})
+
         return JsonResponse({'detail': 'Successfully registered.'})
     else:
         return JsonResponse({'error': form.errors})
@@ -106,13 +115,13 @@ def subscription_view(request):
     terraform_dir = os.path.join(os.path.dirname(__file__), '../terraform-commands/')
     if (subscription == 'Free'):
         subscription_type = 0
-        process = subprocess.Popen([terraform_dir + 'prod.sh'], shell=True)
+        subprocess.Popen([terraform_dir + 'prod.sh'], shell=True)
     elif (subscription == 'Standard'):
         subscription_type = 1
-        process = subprocess.Popen([terraform_dir + 'standard.sh'], shell=True)
+        subprocess.Popen([terraform_dir + 'standard.sh'], shell=True)
     elif (subscription == 'Enterprise'):
         subscription_type = 2        
-        process = subprocess.Popen([terraform_dir + 'enterprise.sh'], shell=True)
+        subprocess.Popen([terraform_dir + 'enterprise.sh'], shell=True)
 
     if subscription_type == '':
         return JsonResponse({})
@@ -124,6 +133,7 @@ def subscription_view(request):
             ':s': subscription_type,
         },
         ReturnValues="UPDATED_NEW")
+
     if response['ResponseMetadata']['HTTPStatusCode'] != 200:
         return HttpResponse('')
     return JsonResponse(data)

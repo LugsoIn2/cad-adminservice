@@ -149,8 +149,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR.parent, '.env'))
-AWS_ACCESS_KEY=os.environ.get('TF_VAR_access_key')
-AWS_SECRET=os.environ.get('TF_VAR_secret_key')
+AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET=os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 #ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
