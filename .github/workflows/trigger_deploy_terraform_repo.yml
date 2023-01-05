@@ -1,0 +1,21 @@
+name: Trigger Deploy Terraform Repo
+on:
+  workflow_run:
+    workflows: ["Build Container Image and Push to AWS ECR"]
+    branches: [main]
+    types: 
+      - completed
+
+  workflow_dispatch:
+
+env:
+ GITHUB_TOKEN: ${{ secrets.ACTIONS_KEY }}
+
+jobs:
+  build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub CLI trigger command
+        run: |
+          gh workflow run Deploy_Production --repo https://github.com/LugsoIn2/cad-terraform-all.git --ref main
