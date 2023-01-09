@@ -19,8 +19,7 @@ WORKDIR /adminservice
 COPY ./adminservice .
 COPY ./requirements.txt /adminservice/requirements.txt
 COPY ./cad-terraform-all /cad-terraform-all
-RUN chown -R www-data:www-data /cad-terraform-all
-RUN chown -R www-data:www-data /adminservice
+RUN chown -R www-data:www-data .
 RUN pip install -r /adminservice/requirements.txt
 
 # collect all static files
