@@ -171,8 +171,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://\w+\.netpy\.de$",
-    r"^http://\w+\.netpy\.de$",
+    r".*\.netpy\.de",
 ]
 
 # PROD ONLY
