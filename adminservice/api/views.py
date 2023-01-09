@@ -13,6 +13,7 @@ import os
 from django.conf import settings
 from boto3.dynamodb.conditions import Key
 import subprocess
+from random import randint
 
 # Dynamodb configuration
 dynamodb = boto3.resource(
@@ -49,6 +50,7 @@ def register_view(request):
     form = UserCreationForm(json.loads(request.body))
     data = json.loads(request.body)
     city = data.get('city')
+    cnr = "cad-" + str(randint(10000000, 99999999))
     if form.is_valid():
         form.save()
         # Register User
@@ -58,9 +60,8 @@ def register_view(request):
         # Login User
         login(request, user)
         # Create entry for tenant table
-        print(city)
         table = dynamodb.Table('tenants')
-        item = table.put_item(Item={"city": city, "subscription_type": 0, "user_id": username})
+        item = table.put_item(Item={"customer_nr": cnr, "city": city, "subscription_type": 0, "user_id": username})
 
         return JsonResponse({'detail': 'Successfully registered.'})
     else:
