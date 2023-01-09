@@ -13,6 +13,7 @@ import os
 from django.conf import settings
 from boto3.dynamodb.conditions import Key
 import subprocess
+from random import randint
 
 # Dynamodb configuration
 dynamodb = boto3.resource(
@@ -49,6 +50,7 @@ def register_view(request):
     form = UserCreationForm(json.loads(request.body))
     data = json.loads(request.body)
     city = data.get('city')
+    cnr = "cad-" + str(randint(10000000, 99999999))
     if form.is_valid():
         form.save()
         # Register User
@@ -58,9 +60,8 @@ def register_view(request):
         # Login User
         login(request, user)
         # Create entry for tenant table
-        print(city)
         table = dynamodb.Table('tenants')
-        item = table.put_item(Item={"city": city, "subscription_type": 0, "user_id": username})
+        item = table.put_item(Item={"customer_nr": cnr, "city": city, "subscription_type": 0, "user_id": username})
 
         return JsonResponse({'detail': 'Successfully registered.'})
     else:
@@ -108,10 +109,20 @@ def mytenant_view(request):
 def subscription_view(request):
     data = json.loads(request.body)
     subscription = data.get('subscription')
-    city = data.get('city')
+    # Get my Tenant information
     table = dynamodb.Table('tenants')
+    response = table.query(
+        IndexName='user_id-index',
+        KeyConditionExpression=Key('user_id').eq(str(request.user))
+    )
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
+        return HttpResponse('')
+    my_tenant = response['Items'][0]
+    city = my_tenant.get('city')
+    c_nr = my_tenant.get('customer_nr')
+
+    # Set subscription Type
     subscription_type = ''
-    
     terraform_dir = os.path.join(os.path.dirname(__file__), '../terraform-commands/')
     if (subscription == 'Free'):
         subscription_type = 0
@@ -119,14 +130,15 @@ def subscription_view(request):
         # destroy terraform workspace, if user had subscription before
     elif (subscription == 'Standard'):
         subscription_type = 1
-        subprocess.Popen([terraform_dir + 'standard.sh'], shell=True)
+        subprocess.Popen([terraform_dir + 'standard.sh ' + c_nr], shell=True)
     elif (subscription == 'Enterprise'):
         subscription_type = 2        
-        subprocess.Popen([terraform_dir + 'enterprise.sh'], shell=True)
+        subprocess.Popen([terraform_dir + 'enterprise.sh ' + c_nr], shell=True)
 
     if subscription_type == '':
         return JsonResponse({})
 
+    # Update subscription type
     response = table.update_item(
         Key={'city': city},
         UpdateExpression="set subscription_type = :s",
