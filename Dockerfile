@@ -9,6 +9,18 @@ RUN pip install gunicorn
 # setup nginx
 RUN apt-get update
 RUN apt-get install -y nginx
+
+# install gh
+RUN apt update && apt install -y \
+  curl \
+  gpg
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg;
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null;
+RUN apt update && apt install -y gh;
+
+# install npm
+RUN apt install -y nodejs npm
+
 COPY ./nginx/proxy-adminservice.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/proxy-adminservice.conf /etc/nginx/sites-enabled/proxy-adminservice.conf
 RUN rm /etc/nginx/sites-enabled/default
@@ -19,7 +31,8 @@ WORKDIR /adminservice
 COPY ./adminservice .
 COPY ./requirements.txt /adminservice/requirements.txt
 COPY ./cad-terraform-all /cad-terraform-all
-RUN chown -R www-data:www-data .
+RUN chown -R www-data:www-data /cad-terraform-all
+RUN chown -R www-data:www-data /adminservice/terraform-commands
 RUN pip install -r /adminservice/requirements.txt
 
 # collect all static files
