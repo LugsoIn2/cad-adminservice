@@ -19,7 +19,8 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/g
 RUN apt update && apt install -y gh;
 
 # install npm
-RUN apt install -y nodejs npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
+RUN apt-get install -y nodejs
 
 COPY ./nginx/proxy-adminservice.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/proxy-adminservice.conf /etc/nginx/sites-enabled/proxy-adminservice.conf
