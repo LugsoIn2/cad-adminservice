@@ -60,7 +60,7 @@ def register_view(request):
         # Login User
         login(request, user)
         # Create entry for tenant table
-        table = dynamodb.Table('tenants')
+        table = dynamodb.Table(settings.TEN_TABLE_NAME)
         item = table.put_item(Item={"customer_nr": cnr, "city": city, "subscription_type": 0, "user_id": username})
 
         return JsonResponse({'detail': 'Successfully registered.'})
@@ -95,7 +95,7 @@ def whoami_view(request):
 def mytenant_view(request):
     if not request.user.is_authenticated:
         return JsonResponse({})
-    table = dynamodb.Table('tenants')
+    table = dynamodb.Table(settings.TEN_TABLE_NAME)
     response = table.query(
         IndexName='user_id-index',
         KeyConditionExpression=Key('user_id').eq(str(request.user))
@@ -110,7 +110,7 @@ def subscription_view(request):
     data = json.loads(request.body)
     subscription = data.get('subscription')
     # Get my Tenant information
-    table = dynamodb.Table('tenants')
+    table = dynamodb.Table(settings.TEN_TABLE_NAME)
     response = table.query(
         IndexName='user_id-index',
         KeyConditionExpression=Key('user_id').eq(str(request.user))

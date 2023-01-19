@@ -164,6 +164,8 @@ AWS_SECRET=os.environ.get('AWS_SECRET_ACCESS_KEY')
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
 
+TEN_TABLE_NAME = os.environ.get('TEN_TABLE_NAME')
+
 
 ###                 ###
 #       CORS ON       #
