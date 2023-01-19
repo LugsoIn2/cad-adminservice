@@ -26,6 +26,7 @@ Put the .env Variable in root directory of the repo
 AWS_ACCESS_KEY=XXX
 AWS_SECRET=XXX
 ALLOWED_HOSTS="0.0.0.0,localhost,127.0.0.1,adminservice.docker.internal"
+TEN_TABLE_NAME=tenants
 ```
 ## Local Docker Run
 To be able to build the docker file locally, the [Terraform Repo](https://github.com/LugsoIn2/cad-terraform-all.git) needs to be located in the root directory of this repository.
