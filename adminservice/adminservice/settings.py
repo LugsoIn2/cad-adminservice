@@ -77,19 +77,28 @@ WSGI_APPLICATION = 'adminservice.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR.parent, '.env'))
+
+DBNAME = os.environ.get('DBNAME')
+DB_USERNAME = os.environ.get('DB_USERNAME')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT')
+
 DATABASES = {
+    #'default': {
+    #   'ENGINE': 'django.db.backends.sqlite3',
+    #   'NAME': BASE_DIR / 'db.sqlite3',
+    #}
     'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DBNAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': '',
-    #     'USER': '',
-    #     'PASSWORD': '',
-    #     'HOST': '',
-    #     'PORT': '',
-    # }
 }
 
 
@@ -155,8 +164,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-env = environ.Env()
-env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET=os.environ.get('AWS_SECRET_ACCESS_KEY')
 
@@ -165,6 +172,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 ALLOWED_HOSTS = [] if not any(ALLOWED_HOSTS) else ALLOWED_HOSTS
 
 TEN_TABLE_NAME = os.environ.get('TEN_TABLE_NAME')
+
 
 
 ###                 ###
