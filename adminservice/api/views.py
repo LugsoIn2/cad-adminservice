@@ -14,6 +14,7 @@ from django.conf import settings
 from boto3.dynamodb.conditions import Key
 import subprocess
 from random import randint
+from boto3.dynamodb.conditions import Attr
 
 # Dynamodb configuration
 dynamodb = boto3.resource(
@@ -104,6 +105,18 @@ def mytenant_view(request):
         return HttpResponse('')
     return JsonResponse(response['Items'][0], safe=False)
 
+# TODO: only give back theme type!!!!
+# Get Information about specific tenant
+def specifictenant_view(request):
+    city = request.GET.get('tenant')
+    table = dynamodb.Table(settings.TEN_TABLE_NAME)
+    filter=Attr("city").eq(city)
+    response = table.scan(FilterExpression=filter)
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
+        return HttpResponse('')
+    items = response['Items'][0]
+    return JsonResponse(items, safe=False)
+
 # Set my subscription type
 @require_POST
 def subscription_view(request):
@@ -134,6 +147,7 @@ def subscription_view(request):
         subscription_type = 2        
         subprocess.Popen([terraform_dir + 'enterprise.sh ' + c_nr], shell=True)
 
+    #subprocess.Popen([terraform_dir + 'test-load-and-build.sh ' + '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 cad-83745679 eventservice 0'], shell=True)
     if subscription_type == '':
         return JsonResponse({})
 
@@ -143,6 +157,35 @@ def subscription_view(request):
         UpdateExpression="set subscription_type = :s",
         ExpressionAttributeValues={
             ':s': subscription_type,
+        },
+        ReturnValues="UPDATED_NEW")
+
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+        return HttpResponse('')
+    return JsonResponse(data)
+
+# Set my subscription type
+@require_POST
+def theme_view(request):
+    data = json.loads(request.body)
+    theme = data.get('theme')
+    # Get my Tenant information
+    table = dynamodb.Table(settings.TEN_TABLE_NAME)
+    response = table.query(
+        IndexName='user_id-index',
+        KeyConditionExpression=Key('user_id').eq(str(request.user))
+    )
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
+        return HttpResponse('')
+    my_tenant = response['Items'][0]
+    city = my_tenant.get('city')
+
+    # Update subscription type
+    response = table.update_item(
+        Key={'city': city},
+        UpdateExpression="set theme_type = :s",
+        ExpressionAttributeValues={
+            ':s': theme,
         },
         ReturnValues="UPDATED_NEW")
 
