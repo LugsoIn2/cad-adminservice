@@ -108,10 +108,12 @@ def mytenant_view(request):
 # TODO: only give back theme type!!!!
 # Get Information about specific tenant
 def specifictenant_view(request):
-    city = request.GET.get('tenant')
+    customer_nr = request.GET.get('customer_nr')
     table = dynamodb.Table(settings.TEN_TABLE_NAME)
-    filter=Attr("city").eq(city)
-    response = table.scan(FilterExpression=filter)
+    response = table.query(
+        IndexName='customer_nr-index',
+        KeyConditionExpression=Key('customer_nr').eq(customer_nr)
+    )
     if response['ResponseMetadata']['HTTPStatusCode'] != 200 or len(response['Items']) == 0:
         return HttpResponse('')
     items = response['Items'][0]
