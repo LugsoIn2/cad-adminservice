@@ -8,6 +8,7 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - TEN_TABLE_NAME=${TEN_TABLE_NAME}
     build:
       context: . #Dir for Compose to build
     env_file:
