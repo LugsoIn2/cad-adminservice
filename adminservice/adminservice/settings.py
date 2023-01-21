@@ -83,7 +83,7 @@ env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 DBNAME = os.environ.get('DBNAME')
 DB_USERNAME = os.environ.get('DB_USERNAME')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_HOST = os.environ.get('DB_HOST')
+DB_HOST = os.environ.get('ADMINTABLE_ENDPOINT')
 DB_PORT = os.environ.get('DB_PORT')
 
 DATABASES = {
