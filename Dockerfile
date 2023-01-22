@@ -28,6 +28,9 @@ COPY ./nginx/proxy-adminservice.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/proxy-adminservice.conf /etc/nginx/sites-enabled/proxy-adminservice.conf
 RUN rm /etc/nginx/sites-enabled/default
 
+# install mysql
+RUN apt-get install -y mariadb-client
+
 # copy service source
 RUN mkdir /adminservice
 WORKDIR /adminservice
@@ -39,7 +42,7 @@ RUN chown -R www-data:www-data /adminservice/terraform-commands
 RUN pip install -r /adminservice/requirements.txt
 
 # collect all static files
-RUN python /adminservice/manage.py migrate
+#RUN python /adminservice/manage.py migrate
 RUN python /adminservice/manage.py collectstatic --noinput
 
 WORKDIR /adminservice
