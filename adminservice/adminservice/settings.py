@@ -164,8 +164,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET=os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY=os.environ.get('AWS_ACCESS_KEY')
+AWS_SECRET=os.environ.get('AWS_SECRET')
 
 #ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")

@@ -23,11 +23,22 @@ python -m pip freeze > requirements.txt
 ## Env File
 Put the .env Variable in root directory of the repo 
 ```
-AWS_ACCESS_KEY=XXX
-AWS_SECRET=XXX
-ALLOWED_HOSTS="0.0.0.0,localhost,127.0.0.1,adminservice.docker.internal"
+AWS_ACCESS_KEY=
+AWS_SECRET=
+TF_VAR_access_key=
+TF_VAR_secret_key=
+TF_VAR_aws_db_user_eventservice_access_key=
+TF_VAR_aws_db_user_eventservice_secret_key=
+TF_VAR_gh_token=
+ALLOWED_HOSTS="0.0.0.0,localhost,127.0.0.1"
+ADMINTABLE_ENDPOINT=
+DBNAME=
+DB_USERNAME=
+DB_PASSWORD=
+DB_PORT='3306'
 TEN_TABLE_NAME=tenants
 ```
+
 ## Local Docker Run
 To be able to build the docker file locally, the [Terraform Repo](https://github.com/LugsoIn2/cad-terraform-all.git) needs to be located in the root directory of this repository.
 
