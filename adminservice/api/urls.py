@@ -14,4 +14,5 @@ urlpatterns = [
     path('tenant/', views.specifictenant_view, name="api-theme"),
     path('subscription/', views.subscription_view, name='api-subscription'),
     path('theme/', views.theme_view, name='api-theme'),
+    path('freetenants/', views.freetenants_view, name='api-theme'),
 ]

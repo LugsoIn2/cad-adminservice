@@ -194,3 +194,7 @@ def theme_view(request):
     if response['ResponseMetadata']['HTTPStatusCode'] != 200:
         return HttpResponse('')
     return JsonResponse(data)
+
+# Get array of free tenants
+def freetenants_view(request):
+    return JsonResponse(['Konstanz', 'Rottweil'], safe=False)
