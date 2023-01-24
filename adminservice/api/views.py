@@ -144,10 +144,10 @@ def subscription_view(request):
         subprocess.Popen([terraform_dir + 'destroy.sh ' + c_nr], shell=True)
     elif (subscription == 'Standard'):
         subscription_type = 1
-        subprocess.Popen([terraform_dir + 'standard.sh ' + c_nr], shell=True)
+        subprocess.Popen([terraform_dir + 'standard.sh ' + c_nr + ' ' + city], shell=True)
     elif (subscription == 'Enterprise'):
         subscription_type = 2        
-        subprocess.Popen([terraform_dir + 'enterprise.sh ' + c_nr], shell=True)
+        subprocess.Popen([terraform_dir + 'enterprise.sh ' + c_nr + ' ' + city], shell=True)
 
     #subprocess.Popen([terraform_dir + 'test-load-and-build.sh ' + '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 cad-83745679 eventservice 0'], shell=True)
     if subscription_type == '':
