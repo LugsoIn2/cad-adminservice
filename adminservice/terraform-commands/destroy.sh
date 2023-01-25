@@ -1,9 +1,10 @@
 #!/bin/bash
 customer_id=$1
-if [[ -n "$customer_id" ]]; then
+city=$2
+if [[ -n "$customer_id" && -n "$city" ]]; then
     terraform -chdir=/cad-terraform-all/subsc_enterprise init
     terraform -chdir=/cad-terraform-all/subsc_enterprise workspace select $customer_id || terraform -chdir=/cad-terraform-all/subsc_enterprise workspace new $customer_id
-    terraform -chdir=/cad-terraform-all/subsc_enterprise destroy -auto-approve
+    terraform -chdir=/cad-terraform-all/subsc_enterprise destroy -auto-approve -var="scraper_cities=$city"
 else
     echo "argument error"
 fi
