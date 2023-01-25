@@ -5,9 +5,9 @@ old_subscription=$3
 
 # Destroy old infrastructure
 if [[ -n "$old_subscription" ]]; then
-    terraform -chdir=/cad-terraform-all/$old_description init
-    terraform -chdir=/cad-terraform-all/$old_description workspace select $customer_id || terraform -chdir=/cad-terraform-all/subsc_enterprise workspace new $customer_id
-    terraform -chdir=/cad-terraform-all/$old_description destroy -auto-approve -var="scraper_cities=$city"
+    terraform -chdir=/cad-terraform-all/$old_subscription init
+    terraform -chdir=/cad-terraform-all/$old_subscription workspace select $customer_id || terraform -chdir=/cad-terraform-all/$old_subscription workspace new $customer_id
+    terraform -chdir=/cad-terraform-all/$old_subscription destroy -auto-approve -var="scraper_cities=$city"
 else
     echo "nothing to destroy"
 fi
