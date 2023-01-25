@@ -197,4 +197,10 @@ def theme_view(request):
 
 # Get array of free tenants
 def freetenants_view(request):
-    return JsonResponse(['Konstanz', 'Rottweil'], safe=False)
+    table = dynamodb.Table(settings.TEN_TABLE_NAME)
+    filter=Attr("subscription_type").eq(0) | Attr("subscription_type").eq(1)
+    response = table.scan(
+        FilterExpression=filter,
+    )
+    free_tenants = list(map(lambda x: x['city'], response['Items']))
+    return JsonResponse(free_tenants, safe=False)
