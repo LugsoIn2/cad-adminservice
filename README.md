@@ -44,7 +44,7 @@ TEN_TABLE_NAME=tenants
 ## Local Docker Run
 To be able to build the docker file locally, the [Terraform Repo](https://github.com/LugsoIn2/cad-terraform-all.git) needs to be located in the root directory of this repository.
 
-Github Actions of this repository automatically clone the terraform repository to build the docker file in the action.
+Github Actions of this repository automatically clone the terraform repository to build the docker file in the action..
 
 ```
 git clone <<cad-terraform-all repository>
