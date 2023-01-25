@@ -135,24 +135,35 @@ def subscription_view(request):
     my_tenant = response['Items'][0]
     city = my_tenant.get('city')
     c_nr = my_tenant.get('customer_nr')
+    old_subs_type = my_tenant.get('subscription_type')
 
-    # Set subscription Type
+    # Get old subscription type
+    old_subscription_chdir = ''
+    if old_subs_type == 1:
+        old_subscription_chdir = 'subsc_standard'
+    elif old_subs_type == 2:
+        old_subscription_chdir = 'subsc_enterprise'
+
+    # Set subscription type
     subscription_type = ''
     terraform_dir = os.path.join(os.path.dirname(__file__), '../terraform-commands/')
     if (subscription == 'Free'):
         subscription_type = 0
-        subprocess.Popen([terraform_dir + 'destroy.sh ' + c_nr + ' ' + city], shell=True)
+        script = terraform_dir + 'destroy.sh ' + c_nr + ' ' + city + ' ' + old_subscription_chdir
+        subprocess.Popen([script], shell=True)
     elif (subscription == 'Standard'):
         subscription_type = 1
-        subprocess.Popen([terraform_dir + 'standard.sh ' + c_nr + ' ' + city], shell=True)
+        script = terraform_dir + 'standard.sh ' + c_nr + ' ' + city + ' ' + old_subscription_chdir
+        subprocess.Popen([script], shell=True)
     elif (subscription == 'Enterprise'):
-        subscription_type = 2        
-        subprocess.Popen([terraform_dir + 'enterprise.sh ' + c_nr + ' ' + city], shell=True)
+        subscription_type = 2
+        script = terraform_dir + 'enterprise.sh ' + c_nr + ' ' + city + ' ' + old_subscription_chdir
+        subprocess.Popen([script], shell=True)
 
     if subscription_type == '':
         return JsonResponse({})
 
-    # Update subscription type
+    # Update subscription type in tenants table
     response = table.update_item(
         Key={'city': city},
         UpdateExpression="set subscription_type = :s",
